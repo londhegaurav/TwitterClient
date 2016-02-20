@@ -1,0 +1,15 @@
+
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.codepath.apps.mysimpletweets.activity.TimeLineActivity">
+
+    <com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView
+        android:id="@+id/rvTimelineGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -1,0 +1,19 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+     <item name="android:colorPrimaryDark" tools:targetApi="lollipop">#4682B4</item>
+    </style>
+    <style name="myDialog" parent="android:Theme.Dialog">
+        <item name="android:colorForeground">#f0f0</item>
+    </style>
+
+</resources>
