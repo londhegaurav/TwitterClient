@@ -47,6 +47,8 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
     private SwipeRefreshLayout swipeContainer;
     private ActionBar actionBar;
     private PostsDatabaseHelper databaseHelper;
+    private boolean flag = false;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
         rvTweets.setScrollViewCallbacks(this);
 
         databaseHelper = PostsDatabaseHelper.getInstance(this);
-
+        fm = getSupportFragmentManager();
         //find the recycle view
         //rvTweets = (RecyclerView) findViewById(R.id.rvTimelineGrid);
         //create arraylist
@@ -67,8 +69,12 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
         //construct the adapter from data source
         if (!isNetworkAvailable()) {
             Toast.makeText(TimeLineActivity.this, "Please check your Internet connectivity.", Toast.LENGTH_LONG).show();
-            aTweets = new TweetsRecycleAdapter(this, tweets, true);
-        } else aTweets = new TweetsRecycleAdapter(this, tweets, false);
+            flag = true;
+        }
+        if (flag == true)
+            aTweets = new TweetsRecycleAdapter(this, tweets, true, fm );
+        else
+            aTweets = new TweetsRecycleAdapter(this, tweets, false, fm);
         //connect adapter to recyvle view
         rvTweets.setAdapter(aTweets);
 
@@ -120,7 +126,7 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
         android.R.color.holo_red_light);
     }
 
-    private void setActionBar() {
+    public void setActionBar() {
 
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.blue)));
         actionBar.setDisplayShowHomeEnabled(true);
@@ -138,13 +144,11 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
         //Toast.makeText(this, "new tweet" + this.tweetText, Toast.LENGTH_LONG).show();
     }
 
-
     public void callComposeTweet(MenuItem item) {
 
-        FragmentManager fm = getSupportFragmentManager();
+        fm = getSupportFragmentManager();
         ComposeTweetDailog editNameDialog = ComposeTweetDailog.newInstance("Some Title");
         editNameDialog.show(fm, "fragment_edit_name");
-
     }
 
     @Override
@@ -185,17 +189,6 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
                 aTweets.notifyItemInserted(aTweets.getItemCount() - 1);
                 aTweets.notifyDataSetChanged();
                 ArrayList<Tweet> t = databaseHelper.getAllPosts();
-
-                //     for (int i = 0; i < t.size(); i++){
-                Tweet ttweet = t.get(0);
-                Log.d("test", String.valueOf(ttweet.getUid()));
-                Log.d("test", String.valueOf(ttweet.getUser().getUid()));
-                Log.d("test", ttweet.getUser().getProfileIamgeURL());
-                Log.d("test", ttweet.getUser().getName());
-                Log.d("test", ttweet.getBody());
-                Log.d("test", ttweet.getUser().getScreenName());
-                Log.d("test", ttweet.getCreatedAt());
-                //   }
             }
 
             @Override
@@ -238,46 +231,46 @@ public class TimeLineActivity extends AppCompatActivity implements ComposeTweetD
     //Fill the timeline by creating the tweet object from the json
     private void populateTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
-                                   final Context context = TimeLineActivity.this;
+               final Context context = TimeLineActivity.this;
 
-                                   @Override
-                                   public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                                       Log.d(getClass().toString(), json.toString());
-                                       //json here
-                                       // desrialize json
-                                       // create models and add them to adapter
-                                       // load the model data into listview
-                                       //databaseHelper.deleteAllPostsAndUsers();
-                                       databaseHelper.addAllPosts(Tweet.fromJsonArray(json));
-                                       //tw = new ArrayList<Tweet>(databaseHelper.getAllPosts());
-                                       //tweets = tw;
-                                       tweets.addAll(Tweet.fromJsonArray(json));
-                                       Log.d("DEBUG_TWeetSize", String.valueOf(tweets.size()));
-                                       //int cnt = databaseHelper.getProfilesCount();
-                                       //tweets.addAll(Tweet.fromJsonArray(json));
-                                       //aTweets.clearData();
-                                       aTweets.notifyItemInserted(aTweets.getItemCount() - 1);
-                                       //aTweets.notifyDataSetChanged();
+               @Override
+               public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                   Log.d(getClass().toString(), json.toString());
+                   //json here
+                   // desrialize json
+                   // create models and add them to adapter
+                   // load the model data into listview
+                   //databaseHelper.deleteAllPostsAndUsers();
+                   databaseHelper.addAllPosts(Tweet.fromJsonArray(json));
+                   //tw = new ArrayList<Tweet>(databaseHelper.getAllPosts());
+                   //tweets = tw;
+                   tweets.addAll(Tweet.fromJsonArray(json));
+                   Log.d("DEBUG_TWeetSize", String.valueOf(tweets.size()));
+                   //int cnt = databaseHelper.getProfilesCount();
+                   //tweets.addAll(Tweet.fromJsonArray(json));
+                   //aTweets.clearData();
+                   aTweets.notifyItemInserted(aTweets.getItemCount() - 1);
+                   //aTweets.notifyDataSetChanged();
 
 
 //               swipeContainer.setRefreshing(false);
-                                   }
+               }
 
-                                   @Override
-                                   public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                                       Log.d("DEBUG", errorResponse.toString());
-                                       //Toast.makeText(this,"Rate limit Exceeded",Toast.LENGTH_LONG).show();
+               @Override
+               public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                   Log.d("DEBUG: On failure ", errorResponse.toString());
+               }
 
-                                   }
-
-                                   @Override
-                                   public void onUserException(Throwable error) {
-                                       super.onUserException(error);
-                                       Log.d("DEBUG", error.toString());
-
-                                       Toast.makeText(context, "Rate limit Exceeded", Toast.LENGTH_LONG).show();
-                                   }
-                               }
+               @Override
+               public void onUserException(Throwable error) {
+                   super.onUserException(error);
+                   Log.d("DEBUG: User ", error.toString());
+                   flag = true;
+                   //aTweets.notifyItemInserted(aTweets.getItemCount() - 1);
+                   aTweets.notifyDataSetChanged();
+                   Toast.makeText(context, "Rate limit Exceeded", Toast.LENGTH_LONG).show();
+               }
+           }
         );
     }
 

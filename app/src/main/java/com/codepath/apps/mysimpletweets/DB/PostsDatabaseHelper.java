@@ -116,19 +116,19 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
             db.beginTransaction();
             try {
                 // The user might already exist in the database (i.e. the same user created multiple posts).
-                 userId = addOrUpdateUser(post.getUser());
+                 userId = addOrUpdateUser(post.user);
 
                 ContentValues values = new ContentValues();
                 //values.put(KEY_POST_ID,post.getUid());
                 values.put(KEY_POST_USER_ID_FK, userId);
-                values.put(KEY_POST_TEXT, post.getBody());
-                values.put(KEY_CREATED_AT, post.getCreatedAt());
+                values.put(KEY_POST_TEXT, post.body);
+                values.put(KEY_CREATED_AT, post.createdAt);
 
                 // Notice how we haven't specified the primary key. SQLite auto increments the primary key column.
                 db.insertOrThrow(TABLE_POSTS, null, values);
                 db.setTransactionSuccessful();
             } catch (Exception e) {
-                Log.d(TAG, "Error while trying to ALL add post to database" +  "KEY_POST_ID :" + post.getUid() + "KEY_POST_USER_ID_FK :" + userId );
+                Log.d(TAG, "Error while trying to ALL add post to database" +  "KEY_POST_ID :" + post.uid + "KEY_POST_USER_ID_FK :" + userId );
             } finally {
                 db.endTransaction();
             }
@@ -149,19 +149,19 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             // The user might already exist in the database (i.e. the same user created multiple posts).
-             userId = addOrUpdateUser(post.getUser());
+             userId = addOrUpdateUser(post.user);
             Log.d("DEBUG", String.valueOf(userId));
             ContentValues values = new ContentValues();
           //  values.put(KEY_POST_ID,post.getUid());
             values.put(KEY_POST_USER_ID_FK, userId);
-            values.put(KEY_POST_TEXT, post.getBody());
-            values.put(KEY_CREATED_AT, post.getCreatedAt());
+            values.put(KEY_POST_TEXT, post.body);
+            values.put(KEY_CREATED_AT, post.createdAt);
 
             // Notice how we haven't specified the primary key. SQLite auto increments the primary key column.
             db.insertOrThrow(TABLE_POSTS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add post to database"+  "KEY_POST_ID :" + post.getUid() + "KEY_POST_USER_ID_FK :" + userId );
+            Log.d(TAG, "Error while trying to add post to database"+  "KEY_POST_ID :" + post.uid + "KEY_POST_USER_ID_FK :" + userId );
         } finally {
             db.endTransaction();
         }
@@ -256,10 +256,10 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
                     newUser.setScreenName(cursor.getString(cursor.getColumnIndex(KEY_SCREEN_NAME)));
 
                     Tweet newPost = new Tweet();
-                    newPost.setUid(cursor.getLong(cursor.getColumnIndex(KEY_POST_ID)));
-                    newPost.setBody(cursor.getString(cursor.getColumnIndex(KEY_POST_TEXT)));
-                    newPost.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
-                    newPost.setUser(newUser);
+                    newPost.uid = cursor.getLong(cursor.getColumnIndex(KEY_POST_ID));
+                    newPost.body = cursor.getString(cursor.getColumnIndex(KEY_POST_TEXT));
+                    newPost.createdAt = cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT));
+                    newPost.user = newUser;
                     posts.add(newPost);
                 } while(cursor.moveToNext());
             }
@@ -299,9 +299,9 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
                     newUser.setScreenName(cursor.getString(cursor.getColumnIndex(KEY_SCREEN_NAME)));
 
                     Tweet newPost = new Tweet();
-                    newPost.setBody(cursor.getString(cursor.getColumnIndex(KEY_POST_TEXT)));
-                    newPost.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
-                    newPost.setUser(newUser);
+                    newPost.body = cursor.getString(cursor.getColumnIndex(KEY_POST_TEXT));
+                    newPost.createdAt = cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT));
+                    newPost.user = newUser;
                     posts.add(newPost);
                 } while(cursor.moveToNext());
             }
