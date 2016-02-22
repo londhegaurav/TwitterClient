@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/ibTweetSubmit"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="220dp"
+            android:paddingLeft="210dp"
             android:paddingTop="19dp"
             />
 </RelativeLayout>

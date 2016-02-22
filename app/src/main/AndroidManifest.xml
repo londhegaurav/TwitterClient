@@ -53,6 +53,10 @@
             android:name=".activity.TimeLineActivity"
             android:label="@string/title_activity_time_line" >
         </activity>
+        <activity
+            android:name=".activity.DetailActivity"
+            android:label="@string/detail_activity" >
+        </activity>
     </application>
 
 </manifest>

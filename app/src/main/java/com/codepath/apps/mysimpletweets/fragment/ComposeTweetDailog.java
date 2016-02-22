@@ -41,7 +41,6 @@ public class ComposeTweetDailog extends DialogFragment {
     private TextView tvUsername;
     private ImageView ivProfileImage2;
 
-
     public ComposeTweetDailog() {
         // Empty constructor is required for DialogFragment
         // Make sure not to add arguments to the constructor
@@ -65,6 +64,9 @@ public class ComposeTweetDailog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle bundle = this.getArguments();
+        String myValue = bundle.getString("screenName");
+
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
@@ -74,10 +76,15 @@ public class ComposeTweetDailog extends DialogFragment {
         tvUsername = (TextView) tweetView.findViewById(R.id.tvUsername);
         ivProfileImage2 = (ImageView) tweetView.findViewById(R.id.ivProfileImage2);
 
-        Button btSave = (Button) tweetView.findViewById(R.id.ibTweetSubmit);
+        final Button btSave = (Button) tweetView.findViewById(R.id.ibTweetSubmit);
         ImageButton btCancel = (ImageButton) tweetView.findViewById(R.id.ibCancel);
 
         getUserInfoAndSet();
+
+        if(myValue!=null){
+            myValue = "@"+ myValue;
+            mEditText.setText(myValue);
+        }
 
         final TextWatcher mTextEditorWatcher = new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -92,7 +99,9 @@ public class ComposeTweetDailog extends DialogFragment {
                     int n = (s.length() - 140) * -1;
                     mTextView.setText(String.valueOf(n));
                     mTextView.setTextColor(Color.RED);
+                    btSave.setEnabled(false);
                 } else {
+                    btSave.setEnabled(true);
                     mTextView.setTextColor(Color.GRAY);
                     mTextView.setText(String.valueOf(s.length()));
                 }
