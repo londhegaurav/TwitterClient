@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:id="@+id/rl">
+    android:id="@+id/rl"
+    android:clickable="true">
 
 
     <ImageView
@@ -26,12 +27,66 @@
         android:layout_toRightOf="@id/ivProfileImage"
         android:layout_below="@id/tvUsername"
         android:layout_marginTop="8dp"
+        android:minHeight="50dp"
         android:paddingBottom="10dp"
       />
-    <View
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivMedia"
+        android:layout_below="@id/tvTweet"/>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:id="@+id/ll"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:layout_margin="40dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/tvUsername"
         android:layout_alignParentBottom="true"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivPostTweet"
+            android:src="@drawable/tweet"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivretweet"
+            android:src="@drawable/retweetgray"
+            android:layout_marginLeft="100dp"
+            android:background="@android:color/transparent"
+        />
+        <TextView
+            android:id="@+id/tvreTweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivstar"
+            android:src="@drawable/starnocolor"
+            android:layout_marginLeft="100dp"
+            android:background="@android:color/transparent"
+            android:state_selected="false"
+            />
+        <TextView
+            android:id="@+id/tvStar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        </LinearLayout>
+    <View
+        android:id="@+id/vwLine"
+        android:layout_width="match_parent"
+        android:layout_below="@id/ll"
         android:layout_height="0.5dp"
         android:background="@android:color/darker_gray"
-        />
+        android:layout_alignParentBottom="true"/>
+
+
 </RelativeLayout>

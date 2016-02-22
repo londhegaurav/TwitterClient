@@ -1,5 +1,8 @@
 package com.codepath.apps.mysimpletweets.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,45 +39,16 @@ import java.util.ArrayList;
       "entities": {
  */
    //Parse the JSON + store the data, encapsulate state logic or display logic.
-public class Tweet {
+public class Tweet implements Parcelable{
     //list out the attribute
 
-    String body;
-    long uid;
-    String createdAt;
-    User user;
-
-    public String getBody() {
-        return body;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public long getUid() {
-        return uid;
-    }
-
-    public void setUid(long uid) {
-        this.uid = uid;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String body;
+    public long uid;
+    public String createdAt;
+    public User user;
+    public ArrayList<Media> medias;
+    public int reTweetCnt;
+    public int favCnt;
 
     public Tweet(){
 
@@ -90,6 +64,28 @@ public class Tweet {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+
+            if(String.valueOf(jsonObject.getInt("retweet_count")).length() > 0) {
+                tweet.reTweetCnt = jsonObject.getInt("retweet_count");
+            }
+            else{
+                tweet.reTweetCnt = 0;
+            }
+
+//            if(String.valueOf(jsonObject.getInt("favourites_count")).length() > 0) {
+//                tweet.favCnt = jsonObject.getInt("favourites_count");
+//            }
+//            else{
+//                tweet.favCnt = 0;
+//            }
+
+            JSONObject entities = jsonObject.optJSONObject("entities");
+            if(entities != null) {
+                JSONArray medias = entities.optJSONArray("media");
+                if (medias != null) {
+                    tweet.medias = Media.fromJSONArray(medias);
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -114,6 +110,42 @@ public class Tweet {
         }
         return tweets;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.body);
+            dest.writeLong(this.uid);
+            dest.writeString(this.createdAt);
+            dest.writeParcelable(this.user, 0);
+            dest.writeTypedList(medias);
+            dest.writeInt(this.reTweetCnt);
+        dest.writeInt(this.favCnt);
+    }
+
+    protected Tweet(Parcel in) {
+        this.body = in.readString();
+            this.uid = in.readLong();
+        this.createdAt = in.readString();
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.medias = in.createTypedArrayList(Media.CREATOR);
+        this.favCnt = in.readInt();
+        this.reTweetCnt = in.readInt();
+    }
+
+    public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
+        public Tweet createFromParcel(Parcel source) {
+            return new Tweet(source);
+        }
+
+        public Tweet[] newArray(int size) {
+            return new Tweet[size];
+        }
+    };
 }
 
 
